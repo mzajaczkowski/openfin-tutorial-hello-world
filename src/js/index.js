@@ -1,3 +1,6 @@
+
+let app = null;
+
 document.addEventListener("DOMContentLoaded", function(){
     init();
 });
@@ -17,7 +20,8 @@ function init(){
 };
 
 function initWithOpenFin(){
-    alert("OpenFin is available");
+    //alert("OpenFin is available");
+    app = new DiagnosticApp();
     // Your OpenFin specific code to go here...
 }
 

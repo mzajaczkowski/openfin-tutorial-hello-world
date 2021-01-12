@@ -1,56 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title></title>
+    <title>Herzlich Wilkommen in Testapp!</title>
+    <link rel="stylesheet" href="mystyle.css">
+    <script src="js/app.js"></script>
+    <script src="js/index.js"></script>
 </head>
 <body>
 
-<script type="text/javascript" charset="utf-8">
-launch_tests = function() {
-  const electron = require('electron');
-  const path = require('path');
-  const fs = require('fs');
+<button id="btn_open_new_window">Open new window</button>
+<button id="update_window_list">Update window list</button>
+<textarea rows="20" cols="80" id="log"></textarea>
+<select id="window_list" size="10"></select>
 
-  // First check if nodejs modules required by tests has been fetched.
-  node_modules_dir = path.normalize(__dirname + '/../../../../../electron/spec/node_modules');
-  if (!fs.existsSync(node_modules_dir)) {
-    alert("Directory " + node_modules_dir + " does not exist.\n Run \"npm run test\" " +
-          "in directory electron to fetch needed nodejs modules.");
-    return;
-  }
-
-  let filter = document.getElementById("tests_filter").value;
-  index_file = path.normalize(__dirname + '/../../../../../electron/spec/static/index.html');
-  if (!fs.existsSync(index_file)) {
-    alert("File " + index_file + " does not exist.");
-    return;
-  }
-  let win = new electron.remote.BrowserWindow({
-      width: 800,
-      height: 600,
-      webPreferences: { additionalArguments: [ "--tests-filter=" + filter ] }
-  });
-  win.on('closed', () => {
-    win = null;
-  });
-  win.loadFile(index_file);
-}
-</script>
-
-<h2>Hello from OpenFin</h2>
-<p>This is a starting point for your OpenFin apps</p>
-<p>No frameworks, libraries or build systems.</p>
-<p>It has unit testing set up (using Karma/Jasmine).</p>
-<p>It also has a ultra simple Node/Express server. Launch it in the Command line with 'node server' from the root directory.</p>
-
-<script type="text/javascript" charset="utf-8">
-if (typeof process !== 'undefined' && process.argv.indexOf('--enable-electron-apis') !== -1) {
-  document.write('Tests filter: <input type="text" id="tests_filter">');
-  document.write('<button onclick="launch_tests();">Launch tests</a><br>');
-}
-</script>
+<button id="window_open_devtools">Open DevTools</button>
 
 </body>
 </html>
-<script src="js/index.js"></script>
