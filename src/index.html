@@ -3,15 +3,23 @@
     <link rel="stylesheet" href="mystyle.css">
     <script src="js/app.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/trie.js"></script>
 </head>
 <body>
+    <input type='text' id='runtime_version' size='50' readonly>
+    <textarea rows="10" cols="80" id="app_manifest"></textarea>
 
-<button id="btn_open_new_window">Open new window</button>
-<button id="update_window_list">Update window list</button>
-<textarea rows="20" cols="80" id="log"></textarea>
-<select id="window_list" size="10"></select>
+    <p>Confirm that misspelled words have a red squiggly line underneath them. Right-click on misspelled words to see suggestions.</p>
+    <p contenteditable="true" spellcheck="true">This is a praggagraph. It is editable. Try to change the text.</p>
+    Input with spellcheck: <input type="text" name="fname" spellcheck="true">
 
-<button id="window_open_devtools">Open DevTools</button>
+    <button id="btn_open_new_window">Open new window</button>
+    <input type='text' id='edt_load_url' vlaue='http://wp.pl/'>
+    <button id="btn_load_url">Load URL</button>
+    <button id="update_window_list">Update window list</button>
+    <select id="window_list" size="10"></select>    
+    <button id="window_open_devtools">Open DevTools</button>
 
+    <textarea rows="20" cols="80" id="log"></textarea>
 </body>
 </html>

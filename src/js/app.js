@@ -15,7 +15,6 @@ class WindowRegistry {
     fin.Application.getCurrentSync().getInfo().then(info => {
       fin.System.showDeveloperTools({name: windowName, uuid: info.initialOptions.uuid});
     });
-    
   }
 
   formatWindowName(isMain, windowName) {
@@ -43,6 +42,13 @@ class WindowRegistry {
   }  
 
   onWindowCreated(windowName) {
+
+    fin.Application.getCurrentSync().getInfo().then(info => {
+      fin.Window.wrap({name: windowName, uuid: info.initialOptions.uuid}).then((window) => {
+        window.getBounds().then(b => {console.warn(b);});
+      });      
+    });    
+
     console.log(`WindowRegistry.onWindowCreated ${windowName}`);
     this.addWindow(windowName, this.formatWindowName(false, windowName));
   }
@@ -194,11 +200,50 @@ class DiagnosticApp {
     this.focusTracker = new FocusTracker(this.windowListUi);
 
     this.uiHandler.bindButton('btn_open_new_window', this.openNewWindow.bind(this));
+    this.uiHandler.bindButton('btn_load_url', this.loadUrl.bind(this));
     //this.uiHandler.bindButton('update_window_list', this.windowRegistry.update.bind(this.windowRegistry));
 
     this.hookApplicationEvents();    
 
     //this.logHandler.addLog(`Application created ${JSON.stringify(this.app.identity)}`);
+
+    console.warn('dupa');
+
+    fin.desktop.System.getRuntimeInfo((info) => {
+      console.warn(info);
+      document.getElementById('runtime_version').value = `Runtime version: ${info.version} ${info.architecture}`;
+    });
+    fin.desktop.Application.getCurrent().getInfo(info => { 
+      console.warn(info);
+      document.getElementById('app_manifest').textContent = JSON.stringify(info.initialOptions, null,2);
+    });
+     //= w.webContents.session.getUserAgent();
+  }
+
+  loadUrl() {
+    const window_id = this.windowListUi.getSelectedItemId();
+    if (!window_id) {
+      console.error('Please select a window');
+      return;
+    }
+
+    let url = document.getElementById('edt_load_url').value;
+    if (!url) {
+      url = 'http://kernel.org';
+    }    
+
+    const windowName = this.windowListUi.getSelectedItemId();    
+    fin.Application.getCurrentSync().getInfo().then(info => {
+      fin.Window.wrap({name: windowName, uuid: info.initialOptions.uuid}).then((window) => {
+        window.navigate(url);
+      });      
+    });
+
+    
+
+    
+    //console.warn(url);
+    //fin.Window.getCurrentSync().navigate(url);
   }
 
   openNewWindow() {
@@ -209,13 +254,21 @@ class DiagnosticApp {
       //defaultWidth: 300,
       //defaultHeight: 300,
       //waitForPageLoad: false,
-      url: `https://www.example.com/${this.lastIndex}`,
+      url: `?${this.lastIndex}`,
+      //url: 'about:blank',
       //frame: true,
       autoShow: true,
       waitForPageLoad: false,
+      webPreferences: {
+        spellCheck: true,
+        //nodeIntegration: true,
+        //partition: 'empty-certificate'
+      },      
     };
 
-    fin.Window.create(winOption);
+    //fin.Window.create(winOption);//.then(w=>{w.navigate('`/beforeunload.html`');});
+
+    fin.Window.create(winOption).then(w=>{  });
 
     //const winOption = {name: `child-window-${Date.now()}`, url: "https://www.example.com", autoShow: true, backgroundColor: "#FF0000", waitForPageLoad: false};
     /*
@@ -231,7 +284,7 @@ class DiagnosticApp {
     });
   }
 
-  onHookFired(name, event) {    
+  onHookFired(name, event, param) {    
     if (name == 'window-created') {
       this.windowRegistry.onWindowCreated(event.name);
     } else if (name == 'window-closing') {
@@ -240,6 +293,8 @@ class DiagnosticApp {
       this.focusTracker.onWindowFocused(event.name);
     } else if (name == 'window-blurred') {
       this.focusTracker.onWindowBlurred(event.name);
+    } else if (name == 'window-bounds-changing') {
+      //console.warn(param);
     } else {
       let targetName = '??';
       if (event && event.name) {
