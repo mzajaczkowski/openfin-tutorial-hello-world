@@ -1,0 +1,20 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>View 3</title>
+</head>
+
+<body bgcolor='chocolate'>
+    <script>
+        window.onbeforeunload = evt => {
+            console.error('Hello from platform view 3 beforeunload handler [STRING]\n\n');
+            //alert('Hello from platform view html'); 
+            //evt.preventDefault(); 
+            return "FireTheHandler"; 
+        }
+    </script>
+    <p>Platform View 3</p>
+    The beforeunload handler here returns STRING
+</body>
+</html>

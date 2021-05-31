@@ -1,0 +1,20 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>View 1</title>
+</head>
+
+<body bgcolor='aqua'>
+    <script>
+        window.onbeforeunload = evt => {
+            console.error('Hello from platform view 1 beforeunload handler [UNDEFINED]\n\n');
+            //alert('Hello from platform view html'); 
+            //evt.preventDefault(); 
+            return undefined; 
+        }
+    </script>
+    <p>Platform View 1</p>
+    The beforeunload handler here returns UNDEFINED
+</body>
+</html>

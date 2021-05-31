@@ -5,8 +5,7 @@
     "description": "A vanilla appseed for OpenFin applications",
     "url": "http://localhost:9070",
     "uuid": "fin-api-diagnostic-app",
-    "autoShow": true,
-    "spellCheck": true
+    "autoShow": true
   },
   "runtime": {
     "arguments": "",

@@ -2,6 +2,9 @@
 let app = null;
 
 document.addEventListener("DOMContentLoaded", function(){
+    window.onbeforeunload = () => {        
+        return "";
+    };
     init();
 });
 

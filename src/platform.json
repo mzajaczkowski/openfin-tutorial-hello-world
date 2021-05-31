@@ -1,0 +1,39 @@
+{
+    "devtools_port": 9090,
+    "startup_app": {
+        "url": "http://localhost:9070/platform.html",
+        "uuid": "platform.html",
+        "autoShow": true,
+        "alwaysOnTop": true,
+        "frame": true,
+        "maximizable": false,
+        "defaultWidth": 660,
+        "defaultHeight": 100,
+        "minHeight": 50,
+        "minWidth": 460,
+        "defaultCentered": true,
+        "shadow": false,
+        "saveWindowState": false,
+        "resizable": false,
+        "webSecurity": false,
+        "contentNavigation": [
+            "http://localhost:9070/*"
+        ],
+        "permissions": {
+            "ExternalWindow": {
+                "wrap": true
+            },
+            "System": {
+                "downloadAsset": true,
+                "getAllExternalWindows": true,
+                "launchExternalProcess": true,
+                "readRegistryValue": false,
+                "terminateExternalProcess": true
+            }
+        }
+    },
+    "runtime": {
+        "arguments": "--no-sandbox --force-device-scale-factor=1 --remote-debugging-port=9222",
+        "version": "18.87.56.37"
+    }
+}

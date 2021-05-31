@@ -1,9 +1,24 @@
 
+class Rect {
+  static fromObject(obj) {
+    return new Rect(obj.left, obj.top, obj.width, obj.height);
+  }
+
+  constructor(x, y, w, h) {
+    this.data = {x: x, y, w, h};
+  }
+
+  toString() {
+    return JSON.stringify(this.data);
+  }
+}
+
 class WindowRegistry {
-  constructor(logHandler, windowListUi) {
+  constructor(logHandler, windowListUi, currentWindow) {
     this.logHandler = logHandler;
     this.windowListUi = windowListUi;
     this.windowNames = new Set();
+    this.currentWindow = currentWindow;
     this.update();
 
     document.getElementById('update_window_list').onclick = this.update.bind(this);
@@ -27,7 +42,6 @@ class WindowRegistry {
 
   onUpdated(windowInfoArray) {
     this.clearWindows();
-    console.warn('updated');
     for (const info of windowInfoArray) {
       this.addWindow(info.mainWindow.name, this.formatWindowName(true, info.mainWindow.name));
       for (const childWindow of info.childWindows) {
@@ -42,13 +56,7 @@ class WindowRegistry {
   }  
 
   onWindowCreated(windowName) {
-
-    fin.Application.getCurrentSync().getInfo().then(info => {
-      fin.Window.wrap({name: windowName, uuid: info.initialOptions.uuid}).then((window) => {
-        window.getBounds().then(b => {console.warn(b);});
-      });      
-    });    
-
+    console.warn(`onWindowCreated $windowName`);
     console.log(`WindowRegistry.onWindowCreated ${windowName}`);
     this.addWindow(windowName, this.formatWindowName(false, windowName));
   }
@@ -58,7 +66,34 @@ class WindowRegistry {
   }
 
   addWindow(windowName, desc) {
-    console.warn(`WindowRegistry.onWindowAdded ${windowName}`);
+    console.warn(`WindowRegistry.addWindow ${windowName}`);
+
+    fin.Application.getCurrentSync().getInfo().then(
+      info => {
+        fin.Window.wrap({name: windowName, uuid: info.initialOptions.uuid}).then(
+          (window) => {
+            window.updateOptions(
+              {
+                minHeight: 200,
+                //minWidth: 400,
+                maxHeight: 300,
+                //maxWidth: 700,
+                //aspectRatio: 2,
+              }
+            ).then(
+              () => {
+                console.log(`options is updated`);
+              }
+            ).catch(
+              (err) => {
+                console.error(err);
+              }
+            );
+          }
+        );
+      }
+    );
+
     this.windowNames.add(windowName);
     this.windowListUi.onWindowAdded(windowName, desc);
   }
@@ -72,6 +107,19 @@ class WindowRegistry {
     for (const windowName of this.windowNames) {
       this.removeWindow(windowName);
     }
+  }
+
+  onWindowBoundsChanged(windowName, event) {
+    fin.Application.getCurrentSync().getInfo().then(info => {
+      fin.Window.wrap({name: windowName, uuid: info.initialOptions.uuid}).then((window) => {
+        const bounds = Rect.fromObject(event);
+        const jsCode = `document.getElementById('window_bounds').value = '${bounds.toString()} [DIP] [${windowName}]'`;
+        window.executeJavaScript(jsCode);
+      });      
+    });
+  }
+
+  onWindowInitialized(windowName) {
   }
 };
 
@@ -152,16 +200,14 @@ class FocusTracker {
   }
 
   onWindowFocused(windowName) {
-    console.warn(`focus ${windowName}`);
+    console.warn(`onWindowFocused ${windowName}`);
     this.windowListUi.setItemClass(windowName, 'focusedwindow');
   }
 
   onWindowBlurred(windowName) {
-    console.warn(`blur ${windowName}`);
+    console.warn(`onWindowBlurred ${windowName}`);
     this.windowListUi.resetItemClass(windowName, 'focusedwindow');
   }
-
-
 }
 
 class WindowListUi extends ListUi {
@@ -196,7 +242,7 @@ class DiagnosticApp {
     this.uiHandler = new UiHandler(this);
     this.logHandler = new LogHandler(this.uiHandler);
     this.windowListUi = new WindowListUi();
-    this.windowRegistry = new WindowRegistry(this.logHandler, this.windowListUi);
+    this.windowRegistry = new WindowRegistry(this.logHandler, this.windowListUi, this.currentWindow);
     this.focusTracker = new FocusTracker(this.windowListUi);
 
     this.uiHandler.bindButton('btn_open_new_window', this.openNewWindow.bind(this));
@@ -207,14 +253,10 @@ class DiagnosticApp {
 
     //this.logHandler.addLog(`Application created ${JSON.stringify(this.app.identity)}`);
 
-    console.warn('dupa');
-
     fin.desktop.System.getRuntimeInfo((info) => {
-      console.warn(info);
       document.getElementById('runtime_version').value = `Runtime version: ${info.version} ${info.architecture}`;
     });
     fin.desktop.Application.getCurrent().getInfo(info => { 
-      console.warn(info);
       document.getElementById('app_manifest').textContent = JSON.stringify(info.initialOptions, null,2);
     });
      //= w.webContents.session.getUserAgent();
@@ -295,6 +337,10 @@ class DiagnosticApp {
       this.focusTracker.onWindowBlurred(event.name);
     } else if (name == 'window-bounds-changing') {
       //console.warn(param);
+    } else if (name == 'window-bounds-changed') {
+      this.windowRegistry.onWindowBoundsChanged(event.name, event);
+    } else if (name == 'window-initialized') {
+      this.windowRegistry.onWindowInitialized(event.name);
     } else {
       let targetName = '??';
       if (event && event.name) {

@@ -1,0 +1,80 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Platfrom Host Window</title>
+</head>
+<body>
+    <script>
+        window.onbeforeunload = evt => {
+            console.error('\n\nHello from Platfrom Host Window beforeunload handler\n\n');
+            //alert('Hello from platform html');
+            console.assert(evt['returnValue'] === undefined);
+//            delete evt['returnValue'];
+            //evt.preventDefault();
+            //return false; 
+  //          return "FireTheHandler";
+        }
+        const createPlatformWindow = (platform, name) => {
+            platform.createWindow({
+                layout: {
+                    content: [
+                        {
+                            content: [
+                                {
+                                    componentName: 'view',
+                                    componentState: {
+                                        name: `view1-component-for-${name}`,
+                                        url: 'http://localhost:9070/platform-view-1.html'
+                                    },
+                                    type: 'component'
+                                },
+                                {
+                                    componentName: 'view',
+                                    componentState: {
+                                        name: `view2-component-for-${name}`,
+                                        url: 'http://localhost:9070/platform-view-2.html'
+                                    },
+                                    type: 'component'
+                                },
+                                {
+                                    componentName: 'view',
+                                    componentState: {
+                                        name: `view3-component-for-${name}`,
+                                        url: 'http://localhost:9070/platform-view-3.html'
+                                    },
+                                    type: 'component'
+                                },
+                                {
+                                    componentName: 'view',
+                                    componentState: {
+                                        name: `view4-component-for-${name}`,
+                                        url: 'http://localhost:9070/platform-view-4.html'
+                                    },
+                                    type: 'component'
+                                }
+                            ],
+                            type: 'stack',
+                        }
+                    ],
+                    settings: {
+                        popoutWholeStack: true,
+                        showCloseIcon: true,
+                        showMaximiseIcon: true,
+                        showPopoutIcon: true,
+                    }
+                },
+                name,
+            })
+        }
+
+        const initialize = async () => {
+            if (typeof fin !== 'undefined') {
+                const platform = await fin.Platform.start({uuid: 'zayc Platform',defaultWindowOptions: {}});
+                createPlatformWindow(platform, 'platform-window');
+            }
+        }
+        initialize()
+    </script>
+    Platform
+</body>
+</html>
