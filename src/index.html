@@ -6,7 +6,7 @@
     <script src="js/trie.js"></script>
 </head>
 <body>    
-    <input type='text' id='window_bounds' size='50' readonly><br>
+    <input type='text' id='window_bounds' size='100' readonly><br>
     <input type='text' id='window_minmax' size='50' readonly><input type='text' id='runtime_version' size='50' readonly>
     
     <textarea rows="10" cols="80" id="app_manifest"></textarea>
@@ -21,6 +21,8 @@
     <button id="update_window_list">Update window list</button>
     <select id="window_list" size="10"></select>    
     <button id="window_open_devtools">Open DevTools</button>
+    <button id="get_monitor_info">fin.System.getMonitorInfo()</button>
+    <button id="start_from_manifest_localhost_9999">fin.Application.startFromManifest('https://localhost:9999')</button>
 
     <textarea rows="20" cols="80" id="log"></textarea>
 </body>

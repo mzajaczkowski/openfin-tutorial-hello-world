@@ -66,7 +66,7 @@ class WindowRegistry {
   }
 
   addWindow(windowName, desc) {
-    console.warn(`WindowRegistry.addWindow ${windowName}`);
+    console.warn(`WindowRegistry.addWindow ${windowName}`);    
 
     fin.Application.getCurrentSync().getInfo().then(
       info => {
@@ -76,7 +76,7 @@ class WindowRegistry {
               {
                 minHeight: 200,
                 //minWidth: 400,
-                maxHeight: 300,
+                maxHeight: 400,
                 //maxWidth: 700,
                 //aspectRatio: 2,
               }
@@ -89,6 +89,13 @@ class WindowRegistry {
                 console.error(err);
               }
             );
+
+            window.getBounds().then(b => {
+              const bounds = Rect.fromObject(b);
+              const jsCode = `document.getElementById('window_bounds').value = '${bounds.toString()} [DIP] [${windowName}] hh ${document.height}'`;
+              window.executeJavaScript(jsCode);
+            });
+
           }
         );
       }
@@ -113,7 +120,7 @@ class WindowRegistry {
     fin.Application.getCurrentSync().getInfo().then(info => {
       fin.Window.wrap({name: windowName, uuid: info.initialOptions.uuid}).then((window) => {
         const bounds = Rect.fromObject(event);
-        const jsCode = `document.getElementById('window_bounds').value = '${bounds.toString()} [DIP] [${windowName}]'`;
+        const jsCode = `document.getElementById('window_bounds').value = '${bounds.toString()} [DIP] [${windowName}] hh ${document.body.clientHeight}'`;        
         window.executeJavaScript(jsCode);
       });      
     });
@@ -247,6 +254,8 @@ class DiagnosticApp {
 
     this.uiHandler.bindButton('btn_open_new_window', this.openNewWindow.bind(this));
     this.uiHandler.bindButton('btn_load_url', this.loadUrl.bind(this));
+    this.uiHandler.bindButton('get_monitor_info', this.getMonitorInfo.bind(this));    
+    this.uiHandler.bindButton('start_from_manifest_localhost_9999', this.startFromManifestLocalhost9999.bind(this));
     //this.uiHandler.bindButton('update_window_list', this.windowRegistry.update.bind(this.windowRegistry));
 
     this.hookApplicationEvents();    
@@ -260,6 +269,10 @@ class DiagnosticApp {
       document.getElementById('app_manifest').textContent = JSON.stringify(info.initialOptions, null,2);
     });
      //= w.webContents.session.getUserAgent();
+  }
+
+  startFromManifestLocalhost9999() {
+    fin.Application.startFromManifest('https://localhost:9999').then(app => {console.warn(app);}).catch(err => {console.warn(err);});
   }
 
   loadUrl() {
@@ -280,12 +293,15 @@ class DiagnosticApp {
         window.navigate(url);
       });      
     });
+  }
 
-    
-
-    
-    //console.warn(url);
-    //fin.Window.getCurrentSync().navigate(url);
+  getMonitorInfo() {
+    fin.desktop.System.getMonitorInfo(function (monitorInfo) {
+      console.warn("This object contains information about all monitors: ", monitorInfo);
+    });
+    fin.desktop.System.getMonitorInfo(function (monitorInfo) {
+      console.warn("This object contains information about all monitors: ", monitorInfo);
+    });
   }
 
   openNewWindow() {
