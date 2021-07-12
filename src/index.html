@@ -5,11 +5,16 @@
     <script src="js/index.js"></script>
     <script src="js/trie.js"></script>
 </head>
-<body>    
-    <input type='text' id='window_bounds' size='100' readonly><br>
-    <input type='text' id='window_minmax' size='50' readonly><input type='text' id='runtime_version' size='50' readonly>
-    
+<body>
+    <input type='text' id='window_bounds' size='80' readonly><br>
+    <button id="zendesk_13342_left">Zendesk 13342 left</button>
+    <button id="zendesk_13342_right">Zendesk 13342 right</button>
+    <button id="zendesk_13342_up">Zendesk 13342 up</button>
+    <button id="zendesk_13342_down">Zendesk 13342 down</button>
+
+    <input type='text' id="runtime_version" readonly><br>
     <textarea rows="10" cols="80" id="app_manifest"></textarea>
+    <textarea rows="10" cols="80" id="monitor_info"></textarea>
 
     <p>Confirm that misspelled words have a red squiggly line underneath them. Right-click on misspelled words to see suggestions.</p>
     <p contenteditable="true" spellcheck="true">This is a praggagraph. It is editable. Try to change the text.</p>
@@ -23,6 +28,7 @@
     <button id="window_open_devtools">Open DevTools</button>
     <button id="get_monitor_info">fin.System.getMonitorInfo()</button>
     <button id="start_from_manifest_localhost_9999">fin.Application.startFromManifest('https://localhost:9999')</button>
+    
 
     <textarea rows="20" cols="80" id="log"></textarea>
 </body>

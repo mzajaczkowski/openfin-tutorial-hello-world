@@ -3,7 +3,8 @@
   "startup_app": {
     "name": "OpenFin appseed",
     "description": "A vanilla appseed for OpenFin applications",
-    "url": "http://localhost:9070",
+    "aaurl": "https://localhost:9999/authenticate",
+    "url": "http://192.168.1.39:9070",
     "uuid": "fin-api-diagnostic-app",
     "autoShow": true
   },
